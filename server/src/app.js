@@ -26,19 +26,11 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin(origin, callback) {
-      // Allow requests without an Origin header
-      // (Postman, server-to-server, health checks, etc.)
+    origin: (origin, callback) => {
       if (!origin) {
         return callback(null, true);
       }
 
-      // Allow exact configured origins
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      // Allow Vercel preview/deployment URLs
       if (
         origin.endsWith(".vercel.app") &&
         origin.includes("nexus-club-events1")
@@ -46,14 +38,14 @@ app.use(
         return callback(null, true);
       }
 
-      // Reject unknown origins
-      return callback(null, false);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(null, false);
     },
-
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-
     allowedHeaders: ["Content-Type", "Authorization"],
-
     credentials: true,
   }),
 );
